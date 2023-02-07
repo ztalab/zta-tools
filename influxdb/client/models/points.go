@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package models // import "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/models"
+package models // import "github.com/ztalab/zta-tools/influxdb/client/models"
 
 import (
 	"bytes"
@@ -27,7 +27,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/pkg/escape"
+	"github.com/ztalab/zta-tools/influxdb/client/pkg/escape"
 )
 
 type escapeSet struct {

@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ztdbp/ZACA/pkg/attrmgr"
-	"github.com/ztdbp/ZACA/pkg/spiffe"
+	"github.com/ztalab/zta-tools/attrmgr"
+	"github.com/ztalab/zta-tools/pkg/spiffe"
 )
 
 var (

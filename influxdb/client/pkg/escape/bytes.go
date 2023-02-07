@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package escape // import "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/pkg/escape"
+package escape // import "github.com/ztalab/zta-tools/influxdb/client/pkg/escape"
 
 import (
 	"bytes"

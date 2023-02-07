@@ -12,8 +12,8 @@
 package redis
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/ztdbp/ZASentinel/pkg/util/json"
 
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"

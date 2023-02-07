@@ -22,6 +22,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
+	"net"
 	"os"
 	"strings"
 	"time"
@@ -29,9 +30,8 @@ import (
 	cf_csr "github.com/ztdbp/cfssl/csr"
 	"github.com/ztdbp/cfssl/helpers"
 
-	"github.com/ztdbp/ZACA/pkg/pkiutil"
-	"github.com/ztdbp/ZACA/pkg/spiffe"
-	"github.com/ztdbp/ZACA/util"
+	"github.com/ztalab/zta-tools/pkg/pkiutil"
+	"github.com/ztalab/zta-tools/pkg/spiffe"
 )
 
 type SupportedSignatureAlgorithms string
@@ -159,7 +159,7 @@ func GenCSR(key []byte, options CertOptions) ([]byte, error) {
 
 func GenWorkloadCSR(key []byte, id *spiffe.IDGIdentity) ([]byte, error) {
 	hostname, _ := os.Hostname()
-	ips := util.GetLocalIPs()
+	ips := GetLocalIPs()
 	hosts := make([]string, 0, 2+len(ips))
 	hosts = append(hosts, id.String(), hostname)
 	hosts = append(hosts, ips...)
@@ -179,7 +179,7 @@ func GenExtendWorkloadCSR(key []byte, id *spiffe.IDGIdentity, csrConf CSRConf) (
 		hostname, _ := os.Hostname()
 		hostnames = append(hostnames, hostname)
 	}
-	ips := util.GetLocalIPs()
+	ips := GetLocalIPs()
 	if len(csrConf.IPAddresses) > 0 {
 		ips = csrConf.IPAddresses
 	}
@@ -198,7 +198,7 @@ func GenExtendWorkloadCSR(key []byte, id *spiffe.IDGIdentity, csrConf CSRConf) (
 func GenCustomExtendCSR(pemKey []byte, id *spiffe.IDGIdentity, opts *CertOptions, exts []pkix.Extension) ([]byte, error) {
 	if opts.Host == "" {
 		hostname, _ := os.Hostname()
-		ips := util.GetLocalIPs()
+		ips := GetLocalIPs()
 		hosts := make([]string, 0, 2+len(ips))
 		hosts = append(hosts, hostname)
 		hosts = append(hosts, ips...)
@@ -239,4 +239,20 @@ func GenCustomExtendCSR(pemKey []byte, id *spiffe.IDGIdentity, opts *CertOptions
 
 	csr := pem.EncodeToMemory(&block)
 	return csr, nil
+}
+
+func GetLocalIPs() []string {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return nil
+	}
+	m := []string{}
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok {
+			if ip4 := ipnet.IP.To4(); ip4 != nil {
+				m = append(m, ip4.String())
+			}
+		}
+	}
+	return m
 }

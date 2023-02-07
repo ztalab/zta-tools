@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package models // import "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/models"
+package models // import "github.com/ztalab/zta-tools/influxdb/client/models"
 
 // from stdlib hash/fnv/fnv.go
 const (

@@ -29,8 +29,8 @@ import (
 	"github.com/ztdbp/cfssl/csr"
 	"github.com/ztdbp/cfssl/helpers"
 
-	"github.com/ztdbp/ZACA/pkg/keygen"
-	"github.com/ztdbp/ZACA/pkg/spiffe"
+	"github.com/ztalab/zta-tools/pkg/keygen"
+	"github.com/ztalab/zta-tools/pkg/spiffe"
 )
 
 const (

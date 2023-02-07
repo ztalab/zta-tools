@@ -14,9 +14,9 @@ limitations under the License.
 package influxdb
 
 import (
-	_ "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client" // this is important because of the bug in go mod
-	client "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/v2"
-	"github.com/ztdbp/ZACA/pkg/logger"
+	_ "github.com/ztalab/zta-tools/influxdb/client" // this is important because of the bug in go mod
+	client "github.com/ztalab/zta-tools/influxdb/client/v2"
+	"github.com/ztalab/zta-tools/logger"
 )
 
 // UDPClient UDP Client

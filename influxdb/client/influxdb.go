@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package client // import "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client"
+package client // import "github.com/ztalab/zta-tools/influxdb/client"
 
 import (
 	"bytes"
@@ -30,7 +30,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/models"
+	"github.com/ztalab/zta-tools/influxdb/client/models"
 )
 
 const (

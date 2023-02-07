@@ -16,8 +16,8 @@ package influxdb
 import (
 	"errors"
 	"fmt"
-	client "github.com/ztdbp/ZACA/pkg/influxdb/influxdb-client/v2"
-	"github.com/ztdbp/ZACA/pkg/logger"
+	"github.com/ztalab/zta-tools/influxdb/client/v2"
+	"github.com/ztalab/zta-tools/logger"
 	"io"
 	"strings"
 	"sync"
@@ -54,7 +54,7 @@ type Response struct {
 func NewMetrics(influxDBHttpClient *HTTPClient, conf *CustomConfig) (metrics *Metrics) {
 	bp, err := client.NewBatchPoints(influxDBHttpClient.BatchPointsConfig)
 	if err != nil {
-		logger.Named("metrics").Errorf("custom-influxdb client.NewBatchPoints err: %v", err)
+		logger.Errorf("custom-influxdb client.NewBatchPoints err: %v", err)
 		return
 	}
 	metrics = &Metrics{
@@ -75,7 +75,7 @@ func (mt *Metrics) AddPoint(metricsData *MetricsData) {
 	//atomic.AddUint64(&mt.counter, 1)
 	pt, err := client.NewPoint(metricsData.Measurement, metricsData.Tags, metricsData.Fields, time.Now())
 	if err != nil {
-		logger.Named("metrics").Errorf("custom-influxdb client.NewPoint err: %s", err)
+		logger.Errorf("custom-influxdb client.NewPoint err: %s", err)
 		return
 	}
 	mt.point <- pt
@@ -111,7 +111,7 @@ func (mt *Metrics) flush() {
 		if strings.Contains(err.Error(), io.EOF.Error()) {
 			err = nil
 		} else {
-			logger.Named("metric").Errorf("custom-influxdb client.Write err: %s", err)
+			logger.Errorf("custom-influxdb client.Write err: %s", err)
 		}
 	}
 	defer mt.InfluxDBHttpClient.FluxDBHttpClose()
