@@ -1,15 +1,13 @@
-/*
-Copyright 2022-present The ZTDBP Authors.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+// Copyright 2022-present The ZTDBP Authors.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//     http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package influxdb
 
@@ -17,7 +15,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ztalab/zta-tools/influxdb/client/v2"
-	"github.com/ztalab/zta-tools/logger"
 	"io"
 	"strings"
 	"sync"
@@ -51,13 +48,12 @@ type Response struct {
 }
 
 // NewMetrics ...
-func NewMetrics(influxDBHttpClient *HTTPClient, conf *CustomConfig) (metrics *Metrics) {
+func NewMetrics(influxDBHttpClient *HTTPClient, conf *CustomConfig) (*Metrics, error) {
 	bp, err := client.NewBatchPoints(influxDBHttpClient.BatchPointsConfig)
 	if err != nil {
-		logger.Errorf("custom-influxdb client.NewBatchPoints err: %v", err)
-		return
+		return nil, err
 	}
-	metrics = &Metrics{
+	metrics := &Metrics{
 		conf:               conf,
 		batchPoints:        bp,
 		point:              make(chan *client.Point, 16),
@@ -65,20 +61,16 @@ func NewMetrics(influxDBHttpClient *HTTPClient, conf *CustomConfig) (metrics *Me
 		InfluxDBHttpClient: influxDBHttpClient,
 	}
 	go metrics.worker()
-	return
+	return metrics, nil
 }
 
-func (mt *Metrics) AddPoint(metricsData *MetricsData) {
-	if mt == nil {
-		return
-	}
-	//atomic.AddUint64(&mt.counter, 1)
+func (mt *Metrics) AddPoint(metricsData *MetricsData) error {
 	pt, err := client.NewPoint(metricsData.Measurement, metricsData.Tags, metricsData.Fields, time.Now())
 	if err != nil {
-		logger.Errorf("custom-influxdb client.NewPoint err: %s", err)
-		return
+		return err
 	}
 	mt.point <- pt
+	return nil
 }
 
 func (mt *Metrics) worker() {
@@ -90,7 +82,6 @@ func (mt *Metrics) worker() {
 				return
 			}
 			mt.batchPoints.AddPoint(p)
-			// When the number of points reaches 50, send data
 			if mt.batchPoints.GetPointsNum() >= mt.conf.FlushSize {
 				mt.flush()
 			}
@@ -100,26 +91,26 @@ func (mt *Metrics) worker() {
 	}
 }
 
-func (mt *Metrics) flush() {
+func (mt *Metrics) flush() error {
 	mt.mu.Lock()
 	defer mt.mu.Unlock()
 	if mt.batchPoints.GetPointsNum() == 0 {
-		return
+		return nil
 	}
 	err := mt.Write()
 	if err != nil {
 		if strings.Contains(err.Error(), io.EOF.Error()) {
 			err = nil
 		} else {
-			logger.Errorf("custom-influxdb client.Write err: %s", err)
+			fmt.Println("custom-influxdb client.Write err:", err)
+			return err
 		}
 	}
 	defer mt.InfluxDBHttpClient.FluxDBHttpClose()
-	// Clear all points
 	mt.batchPoints.ClearPoints()
+	return nil
 }
 
-// Write data timeout processing
 func (mt *Metrics) Write() error {
 	ch := make(chan error, 1)
 	go func() {
@@ -136,6 +127,6 @@ func (mt *Metrics) Write() error {
 func (mt *Metrics) count() {
 	for {
 		time.Sleep(time.Second)
-		fmt.Println("Counter：", atomic.LoadUint64(&mt.counter))
+		fmt.Println("counter：", atomic.LoadUint64(&mt.counter))
 	}
 }

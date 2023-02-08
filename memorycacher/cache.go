@@ -6,19 +6,6 @@
  * @FilePath: /ServiceCar/utils/memorycache/cache.go
  */
 
-/*
-Copyright 2022-present The ZTDBP Authors.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package memorycacher
 
 import (
@@ -78,7 +65,7 @@ type cache struct {
 	janitor           *janitor
 }
 
-//Determine whether the amount of schema inside the map schema structure has reached the maximum number limit
+// Determine whether the amount of schema inside the map schema structure has reached the maximum number limit
 func (c *cache) IsReachMaxItemsCount() bool {
 	return c.ItemCount() >= c.maxItemsCount
 }
@@ -227,7 +214,7 @@ func (c *cache) get(k string) (interface{}, bool) {
 	return item.Object, true
 }
 
-//send map clean to cache janitor
+// send map clean to cache janitor
 func (c *cache) ShoudClean() {
 	if c.janitor.shoudClean == nil {
 		return
