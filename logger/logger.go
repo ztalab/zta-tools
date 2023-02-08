@@ -127,8 +127,11 @@ func WithContext(ctx context.Context) *Entry {
 	if ctx == nil {
 		ctx = context.Background()
 	}
-
 	return logrus.WithContext(ctx)
+}
+
+func Named(name string) *Entry {
+	return logrus.WithField("name", name)
 }
 
 // Define logrus alias
